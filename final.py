@@ -141,7 +141,7 @@ class Round1():
 
     #what happend when you click the consonant button
     def consonants_click(self):
-        number=random.randint(0,4)
+        number=random.randint(0,20)
         chosenconsonant=self.consonants[number]
         print(chosenconsonant)
         self.update_box(chosenconsonant)
