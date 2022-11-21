@@ -49,6 +49,11 @@ class Round1():
         self.parent=parent
         self.frame=Frame(window)
         self.frame.pack()
+        
+        # we need to assign window to this class,
+        # so we can access it later in this program 
+        # docs [https://www.programiz.com/article/python-self-why]
+        self.window = window
         global x
         global alltheletters
         
@@ -85,27 +90,52 @@ class Round1():
         self.lbl1=Label(window, text="Welcome to Countdown", fg='white', font=("Ariel",30),bg="#328fa8")
         self.lbl1.place(x=305, y=100)
     #what happens when you click the vowels button
-        seconds=StringVar()
-        seconds.set("00")
-        self.timer=Entry(window,textvariable=seconds)
-        self.timer.place(x=450,y=300,width=50,height=40)
+
+        # since we are working with classes,
+        # use "self" instead of global 
+        # to assign seconds to the class
+        # then we can access seconds from within our class using "self.seconds"
+        self.seconds=StringVar()
+        self.seconds.set("00")
+
+        # it has been renamed to timer_entry to avoid name clashing 
+        # since below we have defined a timer method that will have
+        # different logic
+        self.timer_entry=Entry(window,textvariable=self.seconds)
+        self.timer_entry.place(x=450,y=300,width=50,height=40)
+
+        self.word_entry=Entry(window)
+    
+    # this method uses "self.window" and "self.seconds"
     def timer(self):
-        global seconds
-        times=int(seconds.get())
-        window.update()
-        time.sleep(1)
-        if times==0:
-            print("Time is up")
-        times-=1
+        times=int(self.seconds.get())
+        self.timer_entry.config(state="readonly")
         
+        self.word_entry.place(x=350,y=450)
         
+        while times >= 0:
+            self.seconds.set("{0:2d}".format(times))
+            self.window.update()
+            sleep(1)
+            if (times== 0):
+                entry = Label(text="Time Over", bg="black", fg="white")
+                # Place it within the window.
+                entry.place(x=350,y=350)
+
+                # Once Timer has ended check if word is in dictionary
+                self.check_word()
+            times-=1
 
     def vowel_click(self):
         global x
         global alltheletters
         global count
-        global timer
-     
+        # deleted global, this is not needed, 
+        
+
+        # try not to repeat code, constants and vowels have also been defined
+        # in consonants_click(), why not just define it once in your class
+        # and use it throughout the program
         consonants=["B","C","D","F","G","H","J","K","L","M","N","P","Q","R","S","T",'V','W','X','Y','Z']
         number=random.randint(0,4)
         vowels=["A","E","I","O","U"]
@@ -160,6 +190,8 @@ class Round1():
             self.btn1.config(state=DISABLED)
             self.btn2.config(state=DISABLED)
             print(alltheletters)
+            # here we are creating an instance of Timer and assigning it to
+            # our class Round1
             self.timer()
             
             
@@ -229,18 +261,24 @@ class Round1():
             self.btn1.config(state=DISABLED)
             self.btn2.config(state=DISABLED)
             print(alltheletters)
-            timer()
+            self.timer()
                 
-            
-
+    # check if the word the user entered is in dictionary     
+    def check_word(self):
+        word = self.word_entry.get()
+        self.word_entry.config(state=DISABLED)
+        print(word)
+        # write code here to check if word is in dictionary
         
         
 
         
 def main():
     window = Tk()
+    # since its a class, normally it starts with a capital letter, like Mainthing
     mainthing(window,"Countdown","1000x500")
-    window.mainloop
+    # mainloop is a function, it should be window.mainloop()
+    window.mainloop()
 if __name__ == "__main__":
     
     main()
